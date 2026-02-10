@@ -5,72 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="iPad POS">
-    <title>iPad POS</title>
+    <title>iPad POS 系統</title>
     <style>
-        /* 全局設定：禁止選取、禁止縮放，模擬 App質感 */
         body {
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f2f2f7; /* iOS 灰色背景 */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f2f2f7;
             user-select: none;
             -webkit-user-select: none;
-            touch-action: manipulation;
             overflow: hidden;
             height: 100vh;
             display: flex;
         }
 
-        /* --- 左側：貨品區 --- */
+        /* 左側導航 */
         #sidebar {
-            width: 270px;
+            width: 260px;
             background-color: #f2f2f7;
             padding: 20px;
-            padding-top: 80px; /* 向下移防止出界 */
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            box-sizing: border-box;
+            gap: 15px;
+            border-right: 1px solid #d1d1d6;
+            padding-top: 50px;
         }
 
         .product-btn {
             width: 100%;
-            height: 180px;
+            height: 150px;
             border-radius: 25px;
             border: none;
             font-weight: 900;
             font-size: 45px;
             color: white;
-            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.1s;
         }
 
-        /* 選中狀態：字體變大，邊框加粗 */
         .product-btn.active {
-            font-size: 140px;
+            font-size: 90px;
             color: black;
-            box-shadow: inset 0 0 0 10px white;
+            box-shadow: inset 0 0 0 8px white;
             transform: scale(1.02);
         }
 
-        /* 顏色定義 */
-        .bg-orange { background-color: rgba(255, 165, 0, 0.3); }
-        .bg-orange.active { background-color: orange; }
-        
-        .bg-blue { background-color: rgba(0, 122, 255, 0.3); }
-        .bg-blue.active { background-color: #007aff; }
+        .bg-orange { background-color: #ff9500; opacity: 0.6; }
+        .bg-orange.active { background-color: #ff9500; opacity: 1; }
+        .bg-blue { background-color: #007aff; opacity: 0.6; }
+        .bg-blue.active { background-color: #007aff; opacity: 1; }
+        .bg-yellow { background-color: #ffcc00; opacity: 0.6; }
+        .bg-yellow.active { background-color: #ffcc00; opacity: 1; }
 
-        .bg-yellow { background-color: rgba(255, 204, 0, 0.3); }
-        .bg-yellow.active { background-color: #ffcc00; }
-
-        /* --- 右側：主操作區 --- */
+        /* 右側主區 */
         #main-content {
             flex: 1;
             background-color: white;
@@ -79,68 +66,65 @@
             padding: 0 40px;
         }
 
-        /* 輸入顯示區 */
+        /* 顯示區 - 已將位置大幅上移 */
         #display-area {
             display: flex;
-            align-items: flex-end; /* 底部對齊 */
-            justify-content: space-between; /* 左右分開 */
-            margin-top: 80px; /* 增加頂部距離 */
-            margin-bottom: 40px;
-            padding: 0 40px;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 50px; /* 大幅上移 */
+            margin-bottom: 20px;
+            height: 150px;
         }
 
         .input-group {
             display: flex;
             flex-direction: column;
+            justify-content: flex-end;
         }
 
         .input-row {
             display: flex;
-            align-items: flex-end; /* 讓標籤和數字底部對齊 */
+            align-items: baseline;
         }
 
         .input-label {
-            font-size: 60px;
+            font-size: 45px;
             font-weight: bold;
             color: #888;
-            margin-bottom: 15px; /* 【修改】減少標籤與數字的垂直距離，讓它們更靠近 */
-            margin-right: 10px;
-            white-space: nowrap;
+            margin-right: 15px;
         }
 
         .input-value {
-            font-size: 150px; /* 【修改】字體從 220px 縮小到 150px */
+            font-size: 110px; /* 修正字體大小，避免爆框 */
             font-weight: 900;
             line-height: 1;
-            text-align: right; /* 數字靠右 */
-            width: 100%;
-            height: 160px; /* 【修改】配合字體縮小高度 */
-            overflow: hidden;
-            display: flex;
-            align-items: flex-end; /* 確保數字貼底顯示 */
-            justify-content: flex-end;
+            text-align: right;
+            flex: 1;
+            height: 110px;
+            letter-spacing: -2px;
         }
 
         .input-line {
-            height: 8px;
+            height: 6px;
             background-color: black;
             width: 100%;
-            margin-top: 5px; /* 【修改】在數字和橫線之間增加一點空隙，不再重疊 */
+            margin-top: 5px;
+            border-radius: 3px;
         }
 
-        /* --- 雙鍵盤區 --- */
+        /* 鍵盤區 */
         #keypads-container {
             display: flex;
             justify-content: center;
-            gap: 80px;
-            margin-bottom: auto;
+            gap: 60px;
+            margin-top: 20px;
         }
 
         .keypad {
             display: grid;
             grid-template-columns: repeat(3, 100px);
             grid-template-rows: repeat(4, 100px);
-            gap: 20px;
+            gap: 15px;
         }
 
         .key-btn {
@@ -149,39 +133,29 @@
             border-radius: 50%;
             background-color: #e5e5ea;
             border: none;
-            font-size: 55px;
-            font-weight: 900;
+            font-size: 45px;
+            font-weight: 800;
             color: black;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            -webkit-tap-highlight-color: transparent;
         }
 
         .key-btn:active { background-color: #d1d1d6; }
 
-        /* --- 底部輸入按鈕 --- */
+        /* 底部按鈕 */
         #submit-btn {
             width: 500px;
-            height: 120px;
+            height: 110px;
             border-radius: 30px;
-            background-color: rgba(128, 128, 128, 0.4);
+            background-color: #c7c7cc;
             color: white;
-            font-size: 65px;
+            font-size: 55px;
             font-weight: 900;
             border: none;
-            margin: 0 auto 50px auto;
+            margin: 30px auto;
             cursor: not-allowed;
-            transition: background-color 0.2s;
-            -webkit-tap-highlight-color: transparent;
         }
 
-        #submit-btn.ready {
-            background-color: red;
-            cursor: pointer;
-        }
-
+        #submit-btn.ready { background-color: #ff3b30; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -190,29 +164,25 @@
         <button class="product-btn bg-orange" onclick="selectProduct('D', this)">D</button>
         <button class="product-btn bg-blue" onclick="selectProduct('藍', this)">藍</button>
         <button class="product-btn bg-yellow" onclick="selectProduct('角', this)">角</button>
-        
         <div style="flex:1;"></div>
-        
-        <div style="text-align: center; color: #888; margin-bottom: 40px; cursor: pointer;" onclick="openReport()">
-            <div style="font-size: 40px;">📊</div>
-            <div style="font-weight: bold; font-size: 20px;">查看報表</div>
+        <div onclick="openReport()" style="text-align:center; cursor:pointer;">
+            <div style="font-size:40px;">📊</div>
+            <div style="font-weight:bold; color:#888;">查看報表</div>
         </div>
     </div>
 
     <div id="main-content">
-        
         <div id="display-area">
-            <div class="input-group" style="width: 320px;">
+            <div class="input-group" style="width: 300px;">
                 <div class="input-row">
-                    <span class="input-label">件：</span>
+                    <span class="input-label">件:</span>
                     <div id="qty-display" class="input-value"></div>
                 </div>
                 <div class="input-line"></div>
             </div>
-
             <div class="input-group" style="width: 450px;">
                 <div class="input-row">
-                    <span class="input-label">$：</span>
+                    <span class="input-label">$:</span>
                     <div id="price-display" class="input-value"></div>
                 </div>
                 <div class="input-line"></div>
@@ -221,163 +191,97 @@
 
         <div id="keypads-container">
             <div class="keypad" id="qty-keypad"></div>
-
             <div class="keypad" id="price-keypad"></div>
         </div>
 
         <button id="submit-btn" onclick="submitTransaction()">輸 入</button>
-
     </div>
 
     <script>
-        // ==========================================
-        // ▼▼▼ 請一定要在這裡貼上您的 Google Apps Script 網址 ▼▼▼
-        // ==========================================
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby3C6xIthFwocOCOjAM5kXJEop_P6BE5k04ZvhoIkWQin6hPF-sEeJDuCB7ZODltSHQ4w/exec"; 
-        
-        // ▼ 這是加密密碼 (必須與 Google Script 裡的一樣) ▼
+        // ▼▼▼ 這裡請填入您的 Google 網址 ▼▼▼
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz0z-Vj58aFkdq3eD8J9AxxdKcVqP-WVeot8cbqnv5bBySm6l9q45s7x0FsU_7P5ThBFg/exec"; 
         const SECRET_KEY = "MyShop2024";
-        // ==========================================
 
-
-        // --- 狀態變數 ---
         let selectedProduct = "";
         let qtyInput = "";
         let priceInput = "";
-        
-        // --- 初始化鍵盤 ---
+
         const keys = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", "", "⌫"];
 
         function createKeypad(elementId, isPrice) {
             const container = document.getElementById(elementId);
             keys.forEach(key => {
                 if (key === "") {
-                    const spacer = document.createElement("div");
-                    container.appendChild(spacer);
+                    container.appendChild(document.createElement("div"));
                 } else {
                     const btn = document.createElement("button");
                     btn.className = "key-btn";
                     btn.innerText = key;
-                    // 綁定點擊事件 (支援觸控)
-                    btn.ontouchstart = (e) => { 
-                        e.preventDefault(); 
-                        handleInput(key, isPrice); 
-                        btn.style.backgroundColor = "#d1d1d6";
-                        setTimeout(() => btn.style.backgroundColor = "", 100);
-                    };
                     btn.onclick = () => handleInput(key, isPrice);
                     container.appendChild(btn);
                 }
             });
         }
 
-        createKeypad("qty-keypad", false);
-        createKeypad("price-keypad", true);
-
-        // --- 輸入邏輯 ---
         function handleInput(key, isPrice) {
             if (isPrice) {
-                // --- 金額邏輯 (十位進位, 最多4位) ---
-                if (key === "⌫") {
-                    if (priceInput.length >= 2) {
-                        priceInput = priceInput.slice(0, -2); // 刪除最後兩位
-                        if (priceInput.length > 0) priceInput += "0"; // 補0
-                    } else {
-                        priceInput = "";
-                    }
-                } else {
-                    // 輸入數字
-                    let current = priceInput;
-                    if (current.endsWith("0")) current = current.slice(0, -1); // 移除末尾0
-                    if (current.length < 3) { // 限制輸入位數
-                        priceInput = current + key + "0";
-                    }
-                }
+                if (key === "⌫") priceInput = priceInput.slice(0, -1);
+                else if (priceInput.length < 5) priceInput += key;
             } else {
-                // --- 件數邏輯 (普通輸入, 最多3位) ---
-                if (key === "⌫") {
-                    qtyInput = qtyInput.slice(0, -1);
-                } else {
-                    if (qtyInput.length < 3) {
-                        qtyInput += key;
-                    }
-                }
+                if (key === "⌫") qtyInput = qtyInput.slice(0, -1);
+                else if (qtyInput.length < 3) qtyInput += key;
             }
             updateDisplay();
         }
 
-        // --- 選擇貨品 ---
-        function selectProduct(name, btnElement) {
+        function selectProduct(name, btn) {
             selectedProduct = name;
-            // 移除所有 active 樣式
             document.querySelectorAll('.product-btn').forEach(b => b.classList.remove('active'));
-            // 加入當前 active 樣式
-            btnElement.classList.add('active');
+            btn.classList.add('active');
             updateDisplay();
         }
 
-        // --- 更新畫面與按鈕狀態 ---
         function updateDisplay() {
-            // 這裡做一個小修改：如果沒有輸入，顯示一個空格，確保高度不會塌陷
-            document.getElementById("qty-display").innerText = qtyInput === "" ? " " : qtyInput;
-            document.getElementById("price-display").innerText = priceInput === "" ? " " : priceInput;
-
+            document.getElementById("qty-display").innerText = qtyInput || " ";
+            document.getElementById("price-display").innerText = priceInput || " ";
             const btn = document.getElementById("submit-btn");
-            const isReady = selectedProduct !== "" && qtyInput !== "" && priceInput !== "";
-            
-            if (isReady) {
-                btn.classList.add("ready");
-            } else {
-                btn.classList.remove("ready");
-            }
+            if (selectedProduct && qtyInput && priceInput) btn.classList.add("ready");
+            else btn.classList.remove("ready");
         }
 
-        // --- 提交資料到 Google Sheets (加密版) ---
         function submitTransaction() {
-            const btn = document.getElementById("submit-btn");
-            if (!btn.classList.contains("ready")) return;
-
-            // 1. 準備資料 (加入 secret 密碼)
+            if (!document.getElementById("submit-btn").classList.contains("ready")) return;
             const data = {
-                secret: SECRET_KEY,  // 傳送密碼
+                secret: SECRET_KEY,
                 timestamp: new Date().toLocaleString(),
                 product: selectedProduct,
                 qty: qtyInput,
-                price: priceInput,
-                total: parseInt(qtyInput) * parseInt(priceInput)
+                price: priceInput
             };
 
-            // 2. 清空畫面 (讓收銀員可以立刻輸入下一筆)
-            qtyInput = "";
-            priceInput = "";
-            selectedProduct = "";
+            // 清除畫面
+            qtyInput = ""; priceInput = ""; selectedProduct = "";
             document.querySelectorAll('.product-btn').forEach(b => b.classList.remove('active'));
             updateDisplay();
 
-            // 3. 發送資料
-            // 【檢查】確認用戶是否已經填寫了 Google 網址
-            if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL.startsWith("http") && !GOOGLE_SCRIPT_URL.includes("您的_GOOGLE_SCRIPT_網址")) {
+            if (GOOGLE_SCRIPT_URL.startsWith("http")) {
                 fetch(GOOGLE_SCRIPT_URL, {
                     method: "POST",
                     mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
-                }).catch(err => {
-                    console.error("上傳失敗", err);
-                    alert("網路錯誤，資料未儲存");
                 });
             } else {
-                // 如果沒填網址，顯示提示 (就是您在圖1看到的那個畫面)
-                alert("請先在程式碼中填入 Google Script 網址！\n" + 
-                      `資料：${data.product} $${data.price}`);
+                alert("請填入 Google Script 網址！\n資料已模擬傳送: " + data.product + " $" + data.price);
             }
         }
 
-        // --- 開啟報表 ---
         function openReport() {
-             // 這裡您可以改成您 Google 試算表的網址
-             window.open('https://docs.google.com/spreadsheets', '_blank');
+            if (GOOGLE_SCRIPT_URL.startsWith("http")) window.location.href = GOOGLE_SCRIPT_URL;
+            else alert("請先設定 Google Script 網址");
         }
+
+        createKeypad("qty-keypad", false);
+        createKeypad("price-keypad", true);
     </script>
 </body>
 </html>
