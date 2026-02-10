@@ -84,8 +84,8 @@
             display: flex;
             align-items: flex-end; /* 底部對齊 */
             justify-content: space-between; /* 左右分開 */
-            margin-top: 60px;
-            margin-bottom: 30px;
+            margin-top: 80px; /* 增加頂部距離 */
+            margin-bottom: 40px;
             padding: 0 40px;
         }
 
@@ -103,26 +103,29 @@
             font-size: 60px;
             font-weight: bold;
             color: #888;
-            margin-bottom: 30px; /* 稍微抬高 */
+            margin-bottom: 15px; /* 【修改】減少標籤與數字的垂直距離，讓它們更靠近 */
             margin-right: 10px;
             white-space: nowrap;
         }
 
         .input-value {
-            font-size: 220px; /* 巨型字體 */
+            font-size: 150px; /* 【修改】字體從 220px 縮小到 150px */
             font-weight: 900;
             line-height: 1;
             text-align: right; /* 數字靠右 */
             width: 100%;
-            height: 220px;
+            height: 160px; /* 【修改】配合字體縮小高度 */
             overflow: hidden;
+            display: flex;
+            align-items: flex-end; /* 確保數字貼底顯示 */
+            justify-content: flex-end;
         }
 
         .input-line {
             height: 8px;
             background-color: black;
             width: 100%;
-            margin-top: -10px; /* 貼近數字 */
+            margin-top: 5px; /* 【修改】在數字和橫線之間增加一點空隙，不再重疊 */
         }
 
         /* --- 雙鍵盤區 --- */
@@ -228,9 +231,9 @@
 
     <script>
         // ==========================================
-        // ▼ 請在這裡貼上您的 Google Apps Script 網址 ▼
+        // ▼▼▼ 請一定要在這裡貼上您的 Google Apps Script 網址 ▼▼▼
         // ==========================================
-        const GOOGLE_SCRIPT_URL = " https://script.google.com/macros/s/AKfycbxvh49Lk3nlyEPx870KzoyO-EzC8bpuZkyENgZuTaJ_p8wftbo6dL437DKypXdLt6NMqg/exec "; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxvh49Lk3nlyEPx870KzoyO-EzC8bpuZkyENgZuTaJ_p8wftbo6dL437DKypXdLt6NMqg/exec"; 
         
         // ▼ 這是加密密碼 (必須與 Google Script 裡的一樣) ▼
         const SECRET_KEY = "MyShop2024";
@@ -315,8 +318,9 @@
 
         // --- 更新畫面與按鈕狀態 ---
         function updateDisplay() {
-            document.getElementById("qty-display").innerText = qtyInput;
-            document.getElementById("price-display").innerText = priceInput;
+            // 這裡做一個小修改：如果沒有輸入，顯示一個空格，確保高度不會塌陷
+            document.getElementById("qty-display").innerText = qtyInput === "" ? " " : qtyInput;
+            document.getElementById("price-display").innerText = priceInput === "" ? " " : priceInput;
 
             const btn = document.getElementById("submit-btn");
             const isReady = selectedProduct !== "" && qtyInput !== "" && priceInput !== "";
@@ -351,7 +355,8 @@
             updateDisplay();
 
             // 3. 發送資料
-            if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL.startsWith("http")) {
+            // 【檢查】確認用戶是否已經填寫了 Google 網址
+            if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL.startsWith("http") && !GOOGLE_SCRIPT_URL.includes("您的_GOOGLE_SCRIPT_網址")) {
                 fetch(GOOGLE_SCRIPT_URL, {
                     method: "POST",
                     mode: "no-cors",
@@ -362,7 +367,7 @@
                     alert("網路錯誤，資料未儲存");
                 });
             } else {
-                // 如果沒填網址，顯示提示
+                // 如果沒填網址，顯示提示 (就是您在圖1看到的那個畫面)
                 alert("請先在程式碼中填入 Google Script 網址！\n" + 
                       `資料：${data.product} $${data.price}`);
             }
