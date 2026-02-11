@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
@@ -24,12 +24,15 @@
             width: 100%; height: 140px;
             border-radius: 20px; border: none;
             font-weight: 900; font-size: 45px; color: white;
-            cursor: pointer; opacity: 0.6; transition: 0.2s;
+            cursor: pointer; opacity: 0.6; transition: all 0.2s ease-in-out;
         }
 
+        /* 選中後字體放大兩倍 (從 45px 變 90px) */
         .product-btn.active {
             opacity: 1; color: black;
-            box-shadow: inset 0 0 0 8px white; transform: scale(1.02);
+            font-size: 90px; 
+            box-shadow: inset 0 0 0 8px white;
+            transform: scale(1.05);
         }
 
         .bg-orange { background-color: #ff9500; }
@@ -61,13 +64,27 @@
             font-size: 18px; visibility: hidden; height: 25px; margin-top: 5px;
         }
 
-        /* 鍵盤區 */
-        #keypads-container { display: flex; justify-content: center; gap: 50px; margin-top: 10px; }
-        .keypad { display: grid; grid-template-columns: repeat(3, 90px); gap: 12px; }
+        /* 鍵盤區域容器佈局 */
+        #keypads-container { 
+            display: flex; 
+            justify-content: space-between; /* 讓兩個鍵盤往兩端靠 */
+            margin-top: 10px;
+            padding: 0 20px;
+        }
+
+        .keypad { display: grid; grid-template-columns: repeat(3, 100px); gap: 15px; }
+
+        /* 件數鍵盤向左移 */
+        #qty-keypad { margin-left: -10px; } 
+
+        /* 金額鍵盤向右移 */
+        #price-keypad { margin-right: -10px; }
+
         .key-btn {
-            width: 90px; height: 90px; border-radius: 50%;
+            width: 100px; height: 100px; border-radius: 50%;
             background-color: #e5e5ea; border: none;
-            font-size: 40px; font-weight: 800; color: black; cursor: pointer;
+            font-size: 55px; /* 數字從 40px 加大到 55px */
+            font-weight: 800; color: black; cursor: pointer;
         }
         .key-btn:active { background-color: #d1d1d6; }
 
@@ -124,7 +141,7 @@
 
     <script>
         // ▼▼▼ 重要：請在此處填入您的 Google Web App 網址 (結尾為 /exec) ▼▼▼
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwBh-NAj8IsDg7-shPOM4wEeeDAIHpW6xKakvZ3u-L-dJ9Uu5AY8ELrnpFpAxtRFtGq/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_4uunN-BuuJnp8iKvtg-VON04hYZeoftzS5xIhFvoNLmRQoBYWjXofLgfagNrArPO/exec"; 
         const SECRET_KEY = "MyShop2024";
 
         let selectedProduct = "";
@@ -133,7 +150,6 @@
 
         const keys = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", "", "⌫"];
 
-        // 初始化鍵盤
         function createKeypad(elementId, isPrice) {
             const container = document.getElementById(elementId);
             keys.forEach(key => {
@@ -143,6 +159,7 @@
                     const btn = document.createElement("button");
                     btn.className = "key-btn";
                     btn.innerText = key;
+                    if (key === "⌫") btn.style.fontSize = "35px"; // 退格鍵字體微調小一點以符合寬度
                     btn.onclick = () => handleInput(key, isPrice);
                     container.appendChild(btn);
                 }
@@ -152,7 +169,7 @@
         function handleInput(key, isPrice) {
             if (isPrice) {
                 if (key === "⌫") priceInput = priceInput.slice(0, -1);
-                else if (priceInput.length < 4) priceInput += key; // 限制最多 4 位數 (千位數)
+                else if (priceInput.length < 4) priceInput += key; // 限制最多 4 位數
             } else {
                 if (key === "⌫") qtyInput = qtyInput.slice(0, -1);
                 else if (qtyInput.length < 3) qtyInput += key;
@@ -174,14 +191,8 @@
             const btn = document.getElementById("submit-btn");
             const hint = document.getElementById("error-hint");
 
-            // 驗證條件：
-            // 1. 有選貨品
-            // 2. 有輸入件數
-            // 3. 有輸入金額
-            // 4. 金額個位數必須為 0
             const isPriceValid = priceInput.length > 0 && priceInput.endsWith("0");
             
-            // 顯示錯誤提示
             if (priceInput.length > 0 && !priceInput.endsWith("0")) {
                 hint.style.visibility = "visible";
             } else {
@@ -199,7 +210,6 @@
             const btn = document.getElementById("submit-btn");
             if (!btn.classList.contains("ready")) return;
 
-            // 鎖定狀態
             btn.classList.remove("ready");
             btn.classList.add("loading");
             btn.innerText = "傳送中...";
@@ -220,11 +230,9 @@
             .then(res => res.text())
             .then(result => {
                 if (result.includes("Success")) {
-                    // 重置所有欄位
                     qtyInput = ""; priceInput = ""; selectedProduct = "";
                     document.querySelectorAll('.product-btn').forEach(b => b.classList.remove('active'));
                     updateDisplay();
-                    
                     btn.innerText = "完成 OK";
                     setTimeout(() => {
                         btn.classList.remove("loading");
@@ -249,11 +257,10 @@
             if (GOOGLE_SCRIPT_URL.startsWith("http")) {
                 window.open(GOOGLE_SCRIPT_URL, '_blank');
             } else {
-                alert("請先在程式碼中填入正確的 GOOGLE_SCRIPT_URL");
+                alert("請填入 GOOGLE_SCRIPT_URL");
             }
         }
 
-        // 初始化執行
         createKeypad("qty-keypad", false);
         createKeypad("price-keypad", true);
     </script>
