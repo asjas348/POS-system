@@ -27,34 +27,47 @@
         .bg-orange { background-color: #ff9500; }
         .bg-blue { background-color: #007aff; }
         .bg-yellow { background-color: #ffcc00; }
+        
+        /* 側邊欄功能按鈕 */
+        .sidebar-func-btn {
+            font-size: 24px; background: none; border: 2px solid #ccc; 
+            border-radius: 15px; cursor: pointer; font-weight: bold; 
+            color: #555; padding: 15px 0; margin-top: 10px;
+        }
 
         /* --- 主畫面 --- */
         #main-content { flex: 1; background-color: white; display: flex; flex-direction: column; padding: 0 30px; position: relative; }
 
-        /* --- 顯示區 (調整水平對齊) --- */
+        /* --- 顯示區 --- */
         #display-area {
-            display: flex; justify-content: space-between; align-items: flex-end; /* 底部對齊 */
-            margin-top: 20px; margin-bottom: 10px; height: 120px; /* 固定高度確保對齊 */
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-top: 20px; margin-bottom: 10px; height: 120px;
         }
         .input-group { display: flex; flex-direction: column; width: 46%; justify-content: flex-end; }
         .input-row { display: flex; align-items: baseline; width: 100%; }
         .input-label { font-size: 35px; font-weight: bold; color: #888; margin-right: 10px; width: 60px; text-align: right; }
-        .input-value { font-size: 90px; font-weight: 900; line-height: 1; text-align: right; flex: 1; border-bottom: 6px solid black; height: 90px; padding-bottom: 5px;}
         
-        /* 錯誤提示 */
+        /* 修改：padding-right 讓數字向左移些少 */
+        .input-value { 
+            font-size: 90px; font-weight: 900; line-height: 1; 
+            text-align: right; flex: 1; border-bottom: 6px solid black; 
+            height: 90px; padding-bottom: 5px;
+            padding-right: 40px; /* 這裡控制數字向左移的程度 */
+        }
+        
         #error-hint { color: #ff3b30; font-weight: bold; text-align: right; visibility: hidden; height: 20px; font-size: 16px; margin-top: 5px; }
 
-        /* --- 鍵盤區 (向上移動) --- */
+        /* --- 主鍵盤區 (加大按鍵) --- */
         #keypads-container { 
             display: flex; justify-content: space-between; 
-            margin-top: 0px; /* 移除上方邊距，讓鍵盤向上 */
-            padding: 0 10px;
+            margin-top: 0px; padding: 0 10px;
         }
-        .keypad { display: grid; grid-template-columns: repeat(3, 95px); gap: 12px; }
+        .keypad { display: grid; grid-template-columns: repeat(3, 105px); gap: 15px; } /* 按鍵加大到 105px */
+        
         .key-btn {
-            width: 95px; height: 95px; border-radius: 50%;
+            width: 105px; height: 105px; border-radius: 50%; /* 按鍵加大到 105px */
             background-color: #e5e5ea; border: none;
-            font-size: 50px; font-weight: 800; color: black; cursor: pointer;
+            font-size: 55px; font-weight: 800; color: black; cursor: pointer;
         }
         .key-btn:active { background-color: #acacb0; }
         .key-btn.back { font-size: 35px; }
@@ -68,8 +81,8 @@
         }
         #submit-btn.ready { background-color: #ff3b30; }
 
-        /* --- 總結彈窗 (Modal) --- */
-        #summary-modal {
+        /* --- 通用彈窗 (Modal) --- */
+        .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
             display: none; justify-content: center; align-items: center; z-index: 1000;
@@ -80,13 +93,18 @@
         }
         .modal-header { padding: 15px; background: #fff; text-align: center; border-bottom: 1px solid #ccc; font-size: 24px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
         .close-btn { background: none; border: none; font-size: 24px; color: #007aff; cursor: pointer; }
-        
-        .modal-body { flex: 1; padding: 20px; display: flex; gap: 20px; overflow-y: auto; }
-        
-        /* 總結左右分欄 */
+        .modal-body { flex: 1; padding: 20px; overflow-y: auto; }
+
+        /* 歷史紀錄表格 */
+        #history-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; }
+        #history-table th { background: #e9ecef; padding: 15px; text-align: left; font-size: 20px; color: #555; }
+        #history-table td { padding: 15px; border-bottom: 1px solid #eee; font-size: 22px; font-weight: bold; }
+        #history-loading { text-align: center; font-size: 24px; color: #888; padding: 20px; }
+
+        /* 總結樣式 */
+        .summary-container { display: flex; gap: 20px; height: 100%; }
         .col-money, .col-stock { flex: 1; background: #fff; padding: 20px; border-radius: 15px; display: flex; flex-direction: column; gap: 10px; }
         .section-title { font-size: 22px; font-weight: 900; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 10px; color: #333; }
-        
         .form-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
         .form-label { font-size: 20px; font-weight: bold; color: #555; }
         .form-input { 
@@ -94,27 +112,27 @@
             border: 1px solid #ccc; border-radius: 8px; background: #f9f9f9; 
             font-weight: bold;
         }
-        .form-input:focus { background: #fff; border-color: #007aff; outline: none; }
         .readonly { background: #e9ecef; color: #333; border: none; }
-        
-        .divider { height: 1px; background: #ccc; margin: 10px 0; }
-        .balance-row { background: #d1e7dd; padding: 10px; border-radius: 10px; }
         .highlight { color: #d63384; }
-
+        .balance-row { background: #d1e7dd; padding: 10px; border-radius: 10px; }
         .modal-footer { padding: 20px; background: #fff; text-align: center; border-top: 1px solid #ccc; }
-        #confirm-summary-btn { 
-            width: 300px; height: 60px; font-size: 28px; font-weight: bold; 
-            background: #28a745; color: white; border: none; border-radius: 15px; cursor: pointer;
-        }
+        #confirm-summary-btn { width: 300px; height: 60px; font-size: 28px; font-weight: bold; background: #28a745; color: white; border: none; border-radius: 15px; cursor: pointer; }
 
-        /* 密碼輸入層 */
+        /* 密碼輸入層 - 調整間距 */
         #password-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: #fff; z-index: 10; display: flex; flex-direction: column; 
             justify-content: center; align-items: center; gap: 20px;
         }
-        #pass-input { font-size: 40px; text-align: center; width: 200px; padding: 10px; border: 2px solid #ccc; border-radius: 10px; }
-
+        #pass-input { font-size: 40px; text-align: center; width: 200px; padding: 10px; border: 2px solid #ccc; border-radius: 10px; margin-bottom: 20px; }
+        
+        /* 密碼鍵盤專用樣式 - 加大間距 */
+        #password-grid {
+            display: grid; 
+            grid-template-columns: repeat(3, 80px); 
+            gap: 25px; /* 這裡把按鍵分開些少 */
+        }
+        
     </style>
 </head>
 <body>
@@ -124,7 +142,10 @@
         <button class="product-btn bg-blue" onclick="selectProduct('藍', this)">藍</button>
         <button class="product-btn bg-yellow" onclick="selectProduct('角', this)">角</button>
         <div style="flex:1;"></div>
-        <button onclick="openSummary()" style="font-size:26px; background:none; border:none; cursor:pointer; font-weight:bold; color:#555; padding: 20px 0;">📋 總結</button>
+        
+        <button class="sidebar-func-btn" onclick="openHistory()">📜 最近20單</button>
+        
+        <button class="sidebar-func-btn" onclick="openSummary()">📋 總結</button>
     </div>
 
     <div id="main-content">
@@ -146,12 +167,36 @@
         <button id="submit-btn" onclick="submitTransaction()">輸 入</button>
     </div>
 
-    <div id="summary-modal">
+    <div id="history-modal" class="modal">
+        <div class="modal-content" style="width: 80%; height: 90%;">
+            <div class="modal-header">
+                <span>📜 最近 20 單交易 (今日)</span>
+                <button class="close-btn" onclick="closeHistory()">✖</button>
+            </div>
+            <div class="modal-body">
+                <div id="history-loading">載入中...</div>
+                <table id="history-table" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th>時間</th>
+                            <th>貨品</th>
+                            <th>件數</th>
+                            <th>金額</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-list"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="summary-modal" class="modal">
         <div class="modal-content">
             <div id="password-overlay">
                 <h2>請輸入管理員密碼</h2>
-                <input type="password" id="pass-input" placeholder="****" maxlength="4">
-                <div style="display:grid; grid-template-columns: repeat(3, 80px); gap:10px;">
+                <input type="password" id="pass-input" placeholder="****" maxlength="4" readonly>
+                
+                <div id="password-grid">
                     <button class="key-btn" onclick="typePass('1')">1</button>
                     <button class="key-btn" onclick="typePass('2')">2</button>
                     <button class="key-btn" onclick="typePass('3')">3</button>
@@ -161,10 +206,11 @@
                     <button class="key-btn" onclick="typePass('7')">7</button>
                     <button class="key-btn" onclick="typePass('8')">8</button>
                     <button class="key-btn" onclick="typePass('9')">9</button>
-                    <button class="key-btn" onclick="typePass('0')">0</button>
                     <button class="key-btn" style="font-size:30px; background:#ffcccb;" onclick="clearPass()">清除</button>
+                    <button class="key-btn" onclick="typePass('0')">0</button>
                     <button class="key-btn" style="font-size:30px; background:#d1e7dd;" onclick="checkPass()">OK</button>
                 </div>
+
                 <button onclick="closeSummary()" style="font-size:20px; margin-top:20px; border:none; background:none; color:blue;">取消</button>
             </div>
 
@@ -175,42 +221,39 @@
                 </div>
                 
                 <div class="modal-body">
-                    <div class="col-money">
-                        <div class="section-title">💰 現金結算</div>
-                        <div class="form-row">
-                            <span class="form-label">總現：</span>
-                            <input type="number" id="sum-cash" class="form-input highlight" oninput="calcBalance()">
-                        </div>
-                        <div class="divider"></div>
-                        <div class="form-row"><span class="form-label">支 1：</span><input type="number" id="exp-1" class="form-input" oninput="calcBalance()"></div>
-                        <div class="form-row"><span class="form-label">支 2：</span><input type="number" id="exp-2" class="form-input" oninput="calcBalance()"></div>
-                        <div class="form-row"><span class="form-label">支 3：</span><input type="number" id="exp-3" class="form-input" oninput="calcBalance()"></div>
-                        <div class="form-row"><span class="form-label">支 4：</span><input type="number" id="exp-4" class="form-input" oninput="calcBalance()"></div>
-                        <div class="divider"></div>
-                        <div class="form-row balance-row">
-                            <span class="form-label">餘額：</span>
-                            <input type="text" id="sum-balance" class="form-input readonly" readonly>
-                        </div>
-                        <div style="font-size:14px; color:#888; margin-top:10px;">* 餘額 = 總現 - 所有支出</div>
-                    </div>
-
-                    <div class="col-stock">
-                        <div class="section-title">📦 貨品結餘</div>
-                        
-                        <div style="background:#fff3cd; padding:10px; border-radius:10px;">
-                            <div class="form-row"><span class="form-label">餘 D (昨)：</span><input type="number" id="prev-d" class="form-input" oninput="calcStock()"></div>
-                            <div class="form-row"><span class="form-label">入貨 D：</span><input type="number" id="add-d" class="form-input" oninput="calcStock()"></div>
-                            <div class="form-row"><span class="form-label" style="font-size:16px;">(賣出 D+角)：</span><input type="text" id="sold-d" class="form-input readonly" style="font-size:20px;" readonly></div>
-                            <div class="divider"></div>
-                            <div class="form-row"><span class="form-label highlight">今日餘 D：</span><input type="text" id="rem-d" class="form-input readonly highlight" readonly></div>
+                    <div class="summary-container">
+                        <div class="col-money">
+                            <div class="section-title">💰 現金結算</div>
+                            <div class="form-row">
+                                <span class="form-label">總現：</span>
+                                <input type="number" id="sum-cash" class="form-input highlight" oninput="calcBalance()">
+                            </div>
+                            <div style="height:1px; background:#ccc; margin:10px 0;"></div>
+                            <div class="form-row"><span class="form-label">支 1：</span><input type="number" id="exp-1" class="form-input" oninput="calcBalance()"></div>
+                            <div class="form-row"><span class="form-label">支 2：</span><input type="number" id="exp-2" class="form-input" oninput="calcBalance()"></div>
+                            <div class="form-row"><span class="form-label">支 3：</span><input type="number" id="exp-3" class="form-input" oninput="calcBalance()"></div>
+                            <div class="form-row"><span class="form-label">支 4：</span><input type="number" id="exp-4" class="form-input" oninput="calcBalance()"></div>
+                            <div style="height:1px; background:#ccc; margin:10px 0;"></div>
+                            <div class="form-row balance-row">
+                                <span class="form-label">餘額：</span>
+                                <input type="text" id="sum-balance" class="form-input readonly" readonly>
+                            </div>
                         </div>
 
-                        <div style="background:#cfe2ff; padding:10px; border-radius:10px; margin-top:10px;">
-                            <div class="form-row"><span class="form-label">餘 藍 (昨)：</span><input type="number" id="prev-blue" class="form-input" oninput="calcStock()"></div>
-                            <div class="form-row"><span class="form-label">入貨 藍：</span><input type="number" id="add-blue" class="form-input" oninput="calcStock()"></div>
-                            <div class="form-row"><span class="form-label" style="font-size:16px;">(賣出 藍)：</span><input type="text" id="sold-blue" class="form-input readonly" style="font-size:20px;" readonly></div>
-                            <div class="divider"></div>
-                            <div class="form-row"><span class="form-label highlight">今日餘 藍：</span><input type="text" id="rem-blue" class="form-input readonly highlight" readonly></div>
+                        <div class="col-stock">
+                            <div class="section-title">📦 貨品結餘</div>
+                            <div style="background:#fff3cd; padding:10px; border-radius:10px;">
+                                <div class="form-row"><span class="form-label">餘 D (昨)：</span><input type="number" id="prev-d" class="form-input" oninput="calcStock()"></div>
+                                <div class="form-row"><span class="form-label">入貨 D：</span><input type="number" id="add-d" class="form-input" oninput="calcStock()"></div>
+                                <div class="form-row"><span class="form-label" style="font-size:16px;">(賣出 D+角)：</span><input type="text" id="sold-d" class="form-input readonly" style="font-size:20px;" readonly></div>
+                                <div class="form-row"><span class="form-label highlight">今日餘 D：</span><input type="text" id="rem-d" class="form-input readonly highlight" readonly></div>
+                            </div>
+                            <div style="background:#cfe2ff; padding:10px; border-radius:10px; margin-top:10px;">
+                                <div class="form-row"><span class="form-label">餘 藍 (昨)：</span><input type="number" id="prev-blue" class="form-input" oninput="calcStock()"></div>
+                                <div class="form-row"><span class="form-label">入貨 藍：</span><input type="number" id="add-blue" class="form-input" oninput="calcStock()"></div>
+                                <div class="form-row"><span class="form-label" style="font-size:16px;">(賣出 藍)：</span><input type="text" id="sold-blue" class="form-input readonly" style="font-size:20px;" readonly></div>
+                                <div class="form-row"><span class="form-label highlight">今日餘 藍：</span><input type="text" id="rem-blue" class="form-input readonly highlight" readonly></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -223,11 +266,10 @@
     </div>
 
     <script>
-        // ▼▼▼ 請更新您的 Google Web App 網址 ▼▼▼
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKHF9xYiD35OSNrDQdfsnaie5IVWNdjiNeOEj-G1Vt8ledj71lJhLsQ_6-TA1rxAif/exec"; 
+        // ▼▼▼ 請務必確認網址已更新為新部署的網址 ▼▼▼
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx6OzL1e6MaHj2zR0SoSAHrazmknCReLYlfbkvu9OWzXGkJtDhGnTpJfe9pm3KphHoN/exec"; 
         const SECRET_KEY = "MyShop2024";
 
-        // --- POS 核心邏輯 ---
         let selectedProduct = "", qtyInput = "", priceInput = "";
         const keys = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", "", "⌫"];
 
@@ -245,7 +287,7 @@
                             else if (priceInput.length < 4) priceInput += key;
                         } else {
                             if (key === "⌫") qtyInput = qtyInput.slice(0, -1);
-                            else if (qtyInput.length < 3) qtyInput += key;
+                            else if (qtyInput.length < 3) qtyInput += key; // 限制最多3位數
                         }
                         updateDisplay();
                     };
@@ -277,7 +319,7 @@
             if (!btn.classList.contains("ready")) return;
 
             const data = {
-                type: "transaction", // 標記為一般交易
+                type: "transaction",
                 secret: SECRET_KEY,
                 timestamp: new Date().toLocaleString('zh-TW', { hour12: false }),
                 product: selectedProduct,
@@ -291,7 +333,6 @@
 
             btn.innerText = "傳送中..."; btn.classList.remove("ready");
             
-            // 使用 sendBeacon 或 fetch (no-cors 加速)
             fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
                 body: JSON.stringify(data),
@@ -301,8 +342,54 @@
             }).catch(() => { btn.innerText = "輸 入"; });
         }
 
-        createKeypad("qty-keypad", false);
-        createKeypad("price-keypad", true);
+        // --- 歷史紀錄功能 (新增) ---
+        function openHistory() {
+            document.getElementById("history-modal").style.display = "flex";
+            document.getElementById("history-loading").style.display = "block";
+            document.getElementById("history-table").style.display = "none";
+            fetchHistory();
+        }
+
+        function closeHistory() {
+            document.getElementById("history-modal").style.display = "none";
+        }
+
+        function fetchHistory() {
+            const tbody = document.getElementById("history-list");
+            tbody.innerHTML = "";
+            
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ secret: SECRET_KEY, type: "getLast20" })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("history-loading").style.display = "none";
+                if(data.status === "Success") {
+                    if (data.data.length === 0) {
+                        tbody.innerHTML = "<tr><td colspan='4' style='text-align:center'>今日尚無交易</td></tr>";
+                    } else {
+                        data.data.forEach(row => {
+                            let tr = document.createElement("tr");
+                            // 格式化時間，去掉單引號
+                            let timeStr = row[0].toString().replace("'", "");
+                            // 嘗試只顯示時間部分 (HH:mm:ss)
+                            if (timeStr.includes(" ")) timeStr = timeStr.split(" ")[1];
+                            
+                            tr.innerHTML = `<td>${timeStr}</td><td>${row[1]}</td><td>${row[2]}</td><td>$${row[3]}</td>`;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                    document.getElementById("history-table").style.display = "table";
+                } else {
+                    tbody.innerHTML = "<tr><td colspan='4'>讀取失敗</td></tr>";
+                    document.getElementById("history-table").style.display = "table";
+                }
+            })
+            .catch(() => {
+                document.getElementById("history-loading").innerText = "網絡錯誤";
+            });
+        }
 
         // --- 總結系統邏輯 ---
         let fetchedStats = { soldD: 0, soldAngle: 0, soldBlue: 0, revenue: 0 };
@@ -318,21 +405,19 @@
             document.getElementById("summary-modal").style.display = "none";
         }
 
-        // 密碼鍵盤邏輯
         function typePass(n) { document.getElementById("pass-input").value += n; }
         function clearPass() { document.getElementById("pass-input").value = ""; }
         function checkPass() {
             if (document.getElementById("pass-input").value === "1238") {
                 document.getElementById("password-overlay").style.display = "none";
                 document.getElementById("summary-form").style.display = "flex";
-                fetchTodayStats(); // 密碼正確後，立即去抓今日數據
+                fetchTodayStats();
             } else {
                 alert("密碼錯誤");
                 clearPass();
             }
         }
 
-        // 從後台抓取今日賣出量
         function fetchTodayStats() {
             const btn = document.getElementById("confirm-summary-btn");
             btn.innerText = "讀取數據中..."; btn.disabled = true;
@@ -345,47 +430,38 @@
             .then(data => {
                 if(data.status === "Success") {
                     fetchedStats = data;
-                    document.getElementById("sold-d").value = data.soldD + data.soldAngle; // D賣出量包含角
+                    document.getElementById("sold-d").value = data.soldD + data.soldAngle;
                     document.getElementById("sold-blue").value = data.soldBlue;
-                    calcStock(); // 重新計算
+                    calcStock();
                     btn.innerText = "確定送出"; btn.disabled = false;
                 }
             })
             .catch(err => {
-                alert("無法讀取銷售數據，請檢查網路");
+                alert("無法讀取數據");
                 btn.innerText = "重試"; btn.disabled = false;
             });
         }
 
-        // 計算餘額
         function calcBalance() {
             let cash = Number(document.getElementById("sum-cash").value) || 0;
-            let e1 = Number(document.getElementById("exp-1").value) || 0;
-            let e2 = Number(document.getElementById("exp-2").value) || 0;
-            let e3 = Number(document.getElementById("exp-3").value) || 0;
-            let e4 = Number(document.getElementById("exp-4").value) || 0;
-            document.getElementById("sum-balance").value = cash - (e1 + e2 + e3 + e4);
+            let exps = [1,2,3,4].reduce((sum, i) => sum + (Number(document.getElementById("exp-"+i).value) || 0), 0);
+            document.getElementById("sum-balance").value = cash - exps;
         }
 
-        // 計算庫存
         function calcStock() {
-            // D計算
             let prevD = Number(document.getElementById("prev-d").value) || 0;
             let addD = Number(document.getElementById("add-d").value) || 0;
             let soldD = fetchedStats.soldD + fetchedStats.soldAngle;
             document.getElementById("rem-d").value = prevD + addD - soldD;
 
-            // 藍計算
             let prevBlue = Number(document.getElementById("prev-blue").value) || 0;
             let addBlue = Number(document.getElementById("add-blue").value) || 0;
             let soldBlue = fetchedStats.soldBlue;
             document.getElementById("rem-blue").value = prevBlue + addBlue - soldBlue;
         }
 
-        // 送出結算
         function submitSummary() {
-            if(!confirm("確定送出結算？送出後不可修改。")) return;
-
+            if(!confirm("確定送出結算？")) return;
             const btn = document.getElementById("confirm-summary-btn");
             btn.innerText = "上傳中..."; btn.disabled = true;
 
@@ -398,7 +474,6 @@
                 exp3: document.getElementById("exp-3").value,
                 exp4: document.getElementById("exp-4").value,
                 balance: document.getElementById("sum-balance").value,
-                // 庫存數據
                 prevD: document.getElementById("prev-d").value,
                 addD: document.getElementById("add-d").value,
                 soldD_Angle: document.getElementById("sold-d").value,
@@ -407,7 +482,6 @@
                 addBlue: document.getElementById("add-blue").value,
                 soldBlue: document.getElementById("sold-blue").value,
                 remBlue: document.getElementById("rem-blue").value,
-                // 系統對帳
                 sysRevenue: fetchedStats.revenue
             };
 
@@ -418,12 +492,8 @@
             .then(res => res.json())
             .then(data => {
                 if(data.status === "Success") {
-                    // 成功後顯示今日總收入
-                    alert("✅ 結算成功！\n\n今日系統總收入為： $" + data.systemRevenue);
+                    alert("✅ 結算成功！\n\n系統總收： $" + data.systemRevenue);
                     closeSummary();
-                    // 清空輸入框 (可選)
-                    document.getElementById("sum-cash").value = "";
-                    document.getElementById("exp-1").value = "";
                 } else {
                     alert("錯誤：" + data.message);
                 }
@@ -434,6 +504,9 @@
                 btn.innerText = "確定送出"; btn.disabled = false;
             });
         }
+
+        createKeypad("qty-keypad", false);
+        createKeypad("price-keypad", true);
     </script>
 </body>
 </html>
