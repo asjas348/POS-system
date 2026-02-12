@@ -3,94 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>iPad POS 系統</title>
+    <title>iPad POS Pro</title>
     <style>
-        body {
-            margin: 0; padding: 0;
-            font-family: -apple-system, sans-serif;
-            background-color: #f2f2f7;
-            display: flex; height: 100vh; overflow: hidden;
-        }
+        /* --- 基礎設定 --- */
+        body { margin: 0; padding: 0; font-family: -apple-system, sans-serif; background-color: #f2f2f7; display: flex; height: 100vh; overflow: hidden; }
+        * { box-sizing: border-box; }
 
         /* --- 側邊欄 --- */
         #sidebar {
-            width: 200px; background-color: #f2f2f7; padding: 20px;
-            display: flex; flex-direction: column; gap: 20px;
-            border-right: 1px solid #d1d1d6; padding-top: 60px;
+            width: 220px; background-color: #f2f2f7; padding: 15px;
+            display: flex; flex-direction: column; gap: 15px;
+            border-right: 1px solid #d1d1d6; padding-top: 40px;
         }
-
         .product-btn {
-            width: 100%; height: 150px;
-            border-radius: 25px; border: none;
-            font-weight: 900; font-size: 45px; color: white;
-            cursor: pointer; opacity: 0.5; transition: all 0.2s;
+            width: 100%; height: 110px; border-radius: 20px; border: none;
+            font-weight: 900; font-size: 35px; color: white;
+            cursor: pointer; opacity: 0.6; transition: 0.1s;
         }
-
-        /* 選中後：字體加大 2 倍以上 (100px)，並變色 */
         .product-btn.active {
-            opacity: 1; color: #000;
-            font-size: 100px !important; 
-            background-color: #ffffff !important;
-            box-shadow: 0 0 20px rgba(0,0,0,0.2);
-            border: 8px solid #34c759; /* 選中時加個綠框更明顯 */
+            opacity: 1; color: #000; font-size: 80px !important;
+            background-color: #ffffff !important; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 5px solid #34c759;
         }
-
         .bg-orange { background-color: #ff9500; }
         .bg-blue { background-color: #007aff; }
         .bg-yellow { background-color: #ffcc00; }
 
-        /* --- 主區域 --- */
-        #main-content {
-            flex: 1; background-color: white;
-            display: flex; flex-direction: column; padding: 0 40px;
-        }
+        /* --- 主畫面 --- */
+        #main-content { flex: 1; background-color: white; display: flex; flex-direction: column; padding: 0 30px; position: relative; }
 
+        /* --- 顯示區 (調整水平對齊) --- */
         #display-area {
-            display: flex; justify-content: space-between; align-items: flex-end;
-            margin-top: 50px; margin-bottom: 30px;
+            display: flex; justify-content: space-between; align-items: flex-end; /* 底部對齊 */
+            margin-top: 20px; margin-bottom: 10px; height: 120px; /* 固定高度確保對齊 */
         }
+        .input-group { display: flex; flex-direction: column; width: 46%; justify-content: flex-end; }
+        .input-row { display: flex; align-items: baseline; width: 100%; }
+        .input-label { font-size: 35px; font-weight: bold; color: #888; margin-right: 10px; width: 60px; text-align: right; }
+        .input-value { font-size: 90px; font-weight: 900; line-height: 1; text-align: right; flex: 1; border-bottom: 6px solid black; height: 90px; padding-bottom: 5px;}
+        
+        /* 錯誤提示 */
+        #error-hint { color: #ff3b30; font-weight: bold; text-align: right; visibility: hidden; height: 20px; font-size: 16px; margin-top: 5px; }
 
-        .input-group { display: flex; flex-direction: column; width: 42%; }
-        .input-row { display: flex; align-items: baseline; }
-        .input-label { font-size: 45px; font-weight: bold; color: #888; margin-right: 10px; }
-        .input-value {
-            font-size: 110px; font-weight: 900; line-height: 1;
-            text-align: right; flex: 1; height: 110px;
-        }
-        .input-line { height: 8px; background-color: black; width: 100%; border-radius: 4px; }
-
-        /* --- 鍵盤佈局：徹底分開 --- */
+        /* --- 鍵盤區 (向上移動) --- */
         #keypads-container { 
-            display: flex; 
-            justify-content: space-between; /* 關鍵：強制推向兩邊 */
-            margin-top: 20px;
+            display: flex; justify-content: space-between; 
+            margin-top: 0px; /* 移除上方邊距，讓鍵盤向上 */
             padding: 0 10px;
         }
-
-        .keypad { 
-            display: grid; 
-            grid-template-columns: repeat(3, 100px); /* 寬度加大 */
-            gap: 20px; 
-        }
-
+        .keypad { display: grid; grid-template-columns: repeat(3, 95px); gap: 12px; }
         .key-btn {
-            width: 100px; height: 100px; border-radius: 50%;
+            width: 95px; height: 95px; border-radius: 50%;
             background-color: #e5e5ea; border: none;
-            font-size: 65px; /* 數字大幅加大 */
-            font-weight: 900; color: black; cursor: pointer;
+            font-size: 50px; font-weight: 800; color: black; cursor: pointer;
         }
         .key-btn:active { background-color: #acacb0; }
-        .key-btn.back { font-size: 40px; } /* 退格鍵稍微小一點 */
+        .key-btn.back { font-size: 35px; }
 
-        /* --- 下方按鈕 --- */
+        /* 輸入按鈕 */
         #submit-btn {
-            width: 500px; height: 110px; border-radius: 30px;
+            width: 420px; height: 90px; border-radius: 25px;
             background-color: #c7c7cc; color: white;
-            font-size: 55px; font-weight: 900; border: none;
-            margin: 40px auto; transition: 0.3s;
+            font-size: 45px; font-weight: 900; border: none;
+            margin: 15px auto; transition: 0.2s;
         }
         #submit-btn.ready { background-color: #ff3b30; }
-        #error-hint { color: red; font-weight: bold; text-align: right; visibility: hidden; }
+
+        /* --- 總結彈窗 (Modal) --- */
+        #summary-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-content {
+            background: #f2f2f7; width: 95%; height: 95%; border-radius: 20px;
+            display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .modal-header { padding: 15px; background: #fff; text-align: center; border-bottom: 1px solid #ccc; font-size: 24px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        .close-btn { background: none; border: none; font-size: 24px; color: #007aff; cursor: pointer; }
+        
+        .modal-body { flex: 1; padding: 20px; display: flex; gap: 20px; overflow-y: auto; }
+        
+        /* 總結左右分欄 */
+        .col-money, .col-stock { flex: 1; background: #fff; padding: 20px; border-radius: 15px; display: flex; flex-direction: column; gap: 10px; }
+        .section-title { font-size: 22px; font-weight: 900; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 10px; color: #333; }
+        
+        .form-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .form-label { font-size: 20px; font-weight: bold; color: #555; }
+        .form-input { 
+            width: 140px; height: 45px; font-size: 24px; text-align: right; 
+            border: 1px solid #ccc; border-radius: 8px; background: #f9f9f9; 
+            font-weight: bold;
+        }
+        .form-input:focus { background: #fff; border-color: #007aff; outline: none; }
+        .readonly { background: #e9ecef; color: #333; border: none; }
+        
+        .divider { height: 1px; background: #ccc; margin: 10px 0; }
+        .balance-row { background: #d1e7dd; padding: 10px; border-radius: 10px; }
+        .highlight { color: #d63384; }
+
+        .modal-footer { padding: 20px; background: #fff; text-align: center; border-top: 1px solid #ccc; }
+        #confirm-summary-btn { 
+            width: 300px; height: 60px; font-size: 28px; font-weight: bold; 
+            background: #28a745; color: white; border: none; border-radius: 15px; cursor: pointer;
+        }
+
+        /* 密碼輸入層 */
+        #password-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; z-index: 10; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; gap: 20px;
+        }
+        #pass-input { font-size: 40px; text-align: center; width: 200px; padding: 10px; border: 2px solid #ccc; border-radius: 10px; }
+
     </style>
 </head>
 <body>
@@ -100,21 +124,19 @@
         <button class="product-btn bg-blue" onclick="selectProduct('藍', this)">藍</button>
         <button class="product-btn bg-yellow" onclick="selectProduct('角', this)">角</button>
         <div style="flex:1;"></div>
-        <button onclick="openReport()" style="font-size:30px; background:none; border:none; cursor:pointer;">📊 報表</button>
+        <button onclick="openSummary()" style="font-size:26px; background:none; border:none; cursor:pointer; font-weight:bold; color:#555; padding: 20px 0;">📋 總結</button>
     </div>
 
     <div id="main-content">
         <div id="display-area">
             <div class="input-group">
                 <div class="input-row"><span class="input-label">件:</span><div id="qty-display" class="input-value"></div></div>
-                <div class="input-line"></div>
             </div>
             <div class="input-group">
                 <div class="input-row"><span class="input-label">$:</span><div id="price-display" class="input-value"></div></div>
-                <div class="input-line"></div>
-                <div id="error-hint">個位數必須為 0</div>
             </div>
         </div>
+        <div id="error-hint">個位數必須為 0</div>
 
         <div id="keypads-container">
             <div class="keypad" id="qty-keypad"></div>
@@ -124,20 +146,96 @@
         <button id="submit-btn" onclick="submitTransaction()">輸 入</button>
     </div>
 
+    <div id="summary-modal">
+        <div class="modal-content">
+            <div id="password-overlay">
+                <h2>請輸入管理員密碼</h2>
+                <input type="password" id="pass-input" placeholder="****" maxlength="4">
+                <div style="display:grid; grid-template-columns: repeat(3, 80px); gap:10px;">
+                    <button class="key-btn" onclick="typePass('1')">1</button>
+                    <button class="key-btn" onclick="typePass('2')">2</button>
+                    <button class="key-btn" onclick="typePass('3')">3</button>
+                    <button class="key-btn" onclick="typePass('4')">4</button>
+                    <button class="key-btn" onclick="typePass('5')">5</button>
+                    <button class="key-btn" onclick="typePass('6')">6</button>
+                    <button class="key-btn" onclick="typePass('7')">7</button>
+                    <button class="key-btn" onclick="typePass('8')">8</button>
+                    <button class="key-btn" onclick="typePass('9')">9</button>
+                    <button class="key-btn" onclick="typePass('0')">0</button>
+                    <button class="key-btn" style="font-size:30px; background:#ffcccb;" onclick="clearPass()">清除</button>
+                    <button class="key-btn" style="font-size:30px; background:#d1e7dd;" onclick="checkPass()">OK</button>
+                </div>
+                <button onclick="closeSummary()" style="font-size:20px; margin-top:20px; border:none; background:none; color:blue;">取消</button>
+            </div>
+
+            <div id="summary-form" style="display:none; flex-direction:column; height:100%;">
+                <div class="modal-header">
+                    <span>📅 今日結算</span>
+                    <button class="close-btn" onclick="closeSummary()">✖</button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="col-money">
+                        <div class="section-title">💰 現金結算</div>
+                        <div class="form-row">
+                            <span class="form-label">總現：</span>
+                            <input type="number" id="sum-cash" class="form-input highlight" oninput="calcBalance()">
+                        </div>
+                        <div class="divider"></div>
+                        <div class="form-row"><span class="form-label">支 1：</span><input type="number" id="exp-1" class="form-input" oninput="calcBalance()"></div>
+                        <div class="form-row"><span class="form-label">支 2：</span><input type="number" id="exp-2" class="form-input" oninput="calcBalance()"></div>
+                        <div class="form-row"><span class="form-label">支 3：</span><input type="number" id="exp-3" class="form-input" oninput="calcBalance()"></div>
+                        <div class="form-row"><span class="form-label">支 4：</span><input type="number" id="exp-4" class="form-input" oninput="calcBalance()"></div>
+                        <div class="divider"></div>
+                        <div class="form-row balance-row">
+                            <span class="form-label">餘額：</span>
+                            <input type="text" id="sum-balance" class="form-input readonly" readonly>
+                        </div>
+                        <div style="font-size:14px; color:#888; margin-top:10px;">* 餘額 = 總現 - 所有支出</div>
+                    </div>
+
+                    <div class="col-stock">
+                        <div class="section-title">📦 貨品結餘</div>
+                        
+                        <div style="background:#fff3cd; padding:10px; border-radius:10px;">
+                            <div class="form-row"><span class="form-label">餘 D (昨)：</span><input type="number" id="prev-d" class="form-input" oninput="calcStock()"></div>
+                            <div class="form-row"><span class="form-label">入貨 D：</span><input type="number" id="add-d" class="form-input" oninput="calcStock()"></div>
+                            <div class="form-row"><span class="form-label" style="font-size:16px;">(賣出 D+角)：</span><input type="text" id="sold-d" class="form-input readonly" style="font-size:20px;" readonly></div>
+                            <div class="divider"></div>
+                            <div class="form-row"><span class="form-label highlight">今日餘 D：</span><input type="text" id="rem-d" class="form-input readonly highlight" readonly></div>
+                        </div>
+
+                        <div style="background:#cfe2ff; padding:10px; border-radius:10px; margin-top:10px;">
+                            <div class="form-row"><span class="form-label">餘 藍 (昨)：</span><input type="number" id="prev-blue" class="form-input" oninput="calcStock()"></div>
+                            <div class="form-row"><span class="form-label">入貨 藍：</span><input type="number" id="add-blue" class="form-input" oninput="calcStock()"></div>
+                            <div class="form-row"><span class="form-label" style="font-size:16px;">(賣出 藍)：</span><input type="text" id="sold-blue" class="form-input readonly" style="font-size:20px;" readonly></div>
+                            <div class="divider"></div>
+                            <div class="form-row"><span class="form-label highlight">今日餘 藍：</span><input type="text" id="rem-blue" class="form-input readonly highlight" readonly></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button id="confirm-summary-btn" onclick="submitSummary()">確定送出</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // ▼ 請在此處填入您的 Google Web App 網址 ▼
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQDjKlDYNXUvBkfMy3Dwp_R8enAqSZEgbDVDHID_xVpSY-cc2oHwEDc3yzoEtAzVgB/exec"; 
+        // ▼▼▼ 請更新您的 Google Web App 網址 ▼▼▼
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKHF9xYiD35OSNrDQdfsnaie5IVWNdjiNeOEj-G1Vt8ledj71lJhLsQ_6-TA1rxAif/exec"; 
         const SECRET_KEY = "MyShop2024";
 
+        // --- POS 核心邏輯 ---
         let selectedProduct = "", qtyInput = "", priceInput = "";
         const keys = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", "", "⌫"];
 
         function createKeypad(elementId, isPrice) {
             const container = document.getElementById(elementId);
             keys.forEach(key => {
-                if (key === "") {
-                    container.appendChild(document.createElement("div"));
-                } else {
+                if (key === "") container.appendChild(document.createElement("div"));
+                else {
                     const btn = document.createElement("button");
                     btn.className = "key-btn" + (key === "⌫" ? " back" : "");
                     btn.innerText = key;
@@ -168,10 +266,8 @@
             document.getElementById("price-display").innerText = priceInput;
             const btn = document.getElementById("submit-btn");
             const err = document.getElementById("error-hint");
-
             const isPriceOk = priceInput.length > 0 && priceInput.endsWith("0");
             err.style.visibility = (priceInput.length > 0 && !priceInput.endsWith("0")) ? "visible" : "hidden";
-
             if (selectedProduct && qtyInput && isPriceOk) btn.classList.add("ready");
             else btn.classList.remove("ready");
         }
@@ -180,32 +276,164 @@
             const btn = document.getElementById("submit-btn");
             if (!btn.classList.contains("ready")) return;
 
+            const data = {
+                type: "transaction", // 標記為一般交易
+                secret: SECRET_KEY,
+                timestamp: new Date().toLocaleString('zh-TW', { hour12: false }),
+                product: selectedProduct,
+                qty: qtyInput,
+                price: priceInput
+            };
+
+            qtyInput = ""; priceInput = ""; selectedProduct = "";
+            document.querySelectorAll('.product-btn').forEach(b => b.classList.remove('active'));
+            updateDisplay();
+
             btn.innerText = "傳送中..."; btn.classList.remove("ready");
+            
+            // 使用 sendBeacon 或 fetch (no-cors 加速)
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: { "Content-Type": "text/plain;charset=utf-8" }
+            }).then(() => {
+                btn.innerText = "完成 OK"; setTimeout(() => { btn.innerText = "輸 入"; }, 800);
+            }).catch(() => { btn.innerText = "輸 入"; });
+        }
+
+        createKeypad("qty-keypad", false);
+        createKeypad("price-keypad", true);
+
+        // --- 總結系統邏輯 ---
+        let fetchedStats = { soldD: 0, soldAngle: 0, soldBlue: 0, revenue: 0 };
+
+        function openSummary() {
+            document.getElementById("summary-modal").style.display = "flex";
+            document.getElementById("password-overlay").style.display = "flex";
+            document.getElementById("summary-form").style.display = "none";
+            document.getElementById("pass-input").value = "";
+        }
+
+        function closeSummary() {
+            document.getElementById("summary-modal").style.display = "none";
+        }
+
+        // 密碼鍵盤邏輯
+        function typePass(n) { document.getElementById("pass-input").value += n; }
+        function clearPass() { document.getElementById("pass-input").value = ""; }
+        function checkPass() {
+            if (document.getElementById("pass-input").value === "1238") {
+                document.getElementById("password-overlay").style.display = "none";
+                document.getElementById("summary-form").style.display = "flex";
+                fetchTodayStats(); // 密碼正確後，立即去抓今日數據
+            } else {
+                alert("密碼錯誤");
+                clearPass();
+            }
+        }
+
+        // 從後台抓取今日賣出量
+        function fetchTodayStats() {
+            const btn = document.getElementById("confirm-summary-btn");
+            btn.innerText = "讀取數據中..."; btn.disabled = true;
+            
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({ secret: SECRET_KEY, type: "getStats" })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === "Success") {
+                    fetchedStats = data;
+                    document.getElementById("sold-d").value = data.soldD + data.soldAngle; // D賣出量包含角
+                    document.getElementById("sold-blue").value = data.soldBlue;
+                    calcStock(); // 重新計算
+                    btn.innerText = "確定送出"; btn.disabled = false;
+                }
+            })
+            .catch(err => {
+                alert("無法讀取銷售數據，請檢查網路");
+                btn.innerText = "重試"; btn.disabled = false;
+            });
+        }
+
+        // 計算餘額
+        function calcBalance() {
+            let cash = Number(document.getElementById("sum-cash").value) || 0;
+            let e1 = Number(document.getElementById("exp-1").value) || 0;
+            let e2 = Number(document.getElementById("exp-2").value) || 0;
+            let e3 = Number(document.getElementById("exp-3").value) || 0;
+            let e4 = Number(document.getElementById("exp-4").value) || 0;
+            document.getElementById("sum-balance").value = cash - (e1 + e2 + e3 + e4);
+        }
+
+        // 計算庫存
+        function calcStock() {
+            // D計算
+            let prevD = Number(document.getElementById("prev-d").value) || 0;
+            let addD = Number(document.getElementById("add-d").value) || 0;
+            let soldD = fetchedStats.soldD + fetchedStats.soldAngle;
+            document.getElementById("rem-d").value = prevD + addD - soldD;
+
+            // 藍計算
+            let prevBlue = Number(document.getElementById("prev-blue").value) || 0;
+            let addBlue = Number(document.getElementById("add-blue").value) || 0;
+            let soldBlue = fetchedStats.soldBlue;
+            document.getElementById("rem-blue").value = prevBlue + addBlue - soldBlue;
+        }
+
+        // 送出結算
+        function submitSummary() {
+            if(!confirm("確定送出結算？送出後不可修改。")) return;
+
+            const btn = document.getElementById("confirm-summary-btn");
+            btn.innerText = "上傳中..."; btn.disabled = true;
+
+            const payload = {
+                type: "closing",
+                secret: SECRET_KEY,
+                totalCash: document.getElementById("sum-cash").value,
+                exp1: document.getElementById("exp-1").value,
+                exp2: document.getElementById("exp-2").value,
+                exp3: document.getElementById("exp-3").value,
+                exp4: document.getElementById("exp-4").value,
+                balance: document.getElementById("sum-balance").value,
+                // 庫存數據
+                prevD: document.getElementById("prev-d").value,
+                addD: document.getElementById("add-d").value,
+                soldD_Angle: document.getElementById("sold-d").value,
+                remD: document.getElementById("rem-d").value,
+                prevBlue: document.getElementById("prev-blue").value,
+                addBlue: document.getElementById("add-blue").value,
+                soldBlue: document.getElementById("sold-blue").value,
+                remBlue: document.getElementById("rem-blue").value,
+                // 系統對帳
+                sysRevenue: fetchedStats.revenue
+            };
 
             fetch(GOOGLE_SCRIPT_URL, {
                 method: "POST",
-                body: JSON.stringify({
-                    secret: SECRET_KEY,
-                    timestamp: new Date().toLocaleString('zh-TW', { hour12: false }),
-                    product: selectedProduct,
-                    qty: qtyInput,
-                    price: priceInput
-                }),
-                headers: { "Content-Type": "text/plain;charset=utf-8" }
+                body: JSON.stringify(payload)
             })
-            .then(() => {
-                qtyInput = ""; priceInput = ""; selectedProduct = "";
-                document.querySelectorAll('.product-btn').forEach(b => b.classList.remove('active'));
-                updateDisplay();
-                btn.innerText = "完成 OK";
-                setTimeout(() => { btn.innerText = "輸 入"; }, 1000);
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === "Success") {
+                    // 成功後顯示今日總收入
+                    alert("✅ 結算成功！\n\n今日系統總收入為： $" + data.systemRevenue);
+                    closeSummary();
+                    // 清空輸入框 (可選)
+                    document.getElementById("sum-cash").value = "";
+                    document.getElementById("exp-1").value = "";
+                } else {
+                    alert("錯誤：" + data.message);
+                }
+                btn.innerText = "確定送出"; btn.disabled = false;
             })
-            .catch(() => { alert("連線失敗"); btn.classList.add("ready"); });
+            .catch(() => {
+                alert("上傳失敗");
+                btn.innerText = "確定送出"; btn.disabled = false;
+            });
         }
-
-        function openReport() { window.open(GOOGLE_SCRIPT_URL, '_blank'); }
-        createKeypad("qty-keypad", false);
-        createKeypad("price-keypad", true);
     </script>
 </body>
 </html>
